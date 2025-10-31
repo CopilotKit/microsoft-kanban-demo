@@ -162,7 +162,7 @@ export default function TaskCard({
           {task.tags.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20"
+              className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20 text-black"
             >
               {tag}
               {onRemoveTag && (
