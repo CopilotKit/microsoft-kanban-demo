@@ -16,43 +16,7 @@ export default function CopilotKitPage() {
     initialState,
   });
 
-  // useCopilotAction({
-  //   name: "createBoard",
-  //   description: "Create a new Kanban board.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "name", type: "string", required: true, description: "Board name" }
-  //   ],
-  //   handler: () => {
-  //     return "Board created";
-  //   }
-  // });
-
-  // useCopilotAction({
-  //   name: "deleteBoard",
-  //   description: "Delete a Kanban board.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "boardId", type: "string", required: true, description: "Board ID to delete" }
-  //   ],
-  //   handler: () => {
-  //     return "Board deleted";
-  //   }
-  // });
-
-  // useCopilotAction({
-  //   name: "renameBoard",
-  //   description: "Rename a Kanban board.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "boardId", type: "string", required: true, description: "Board ID to rename" },
-  //     { name: "name", type: "string", required: true, description: "New board name" }
-  //   ],
-  //   handler: () => {
-  //     return "Board renamed";
-  //   }
-  // });
-
+  // UI-only action: switchBoard (no backend equivalent)
   useCopilotAction({
     name: "switchBoard",
     description: "Switch to a different board.",
@@ -69,112 +33,6 @@ export default function CopilotKitPage() {
       return "Switched board";
     }
   });
-
-  // // Task Management Actions
-  // useCopilotAction({
-  //   name: "createTask",
-  //   description: "Create a new task on the active board.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "title", type: "string", required: true, description: "Title of the task" },
-  //     { name: "subtitle", type: "string", required: false, description: "Optional subtitle for the task" },
-  //     { name: "description", type: "string", required: false, description: "Optional description for the task" }
-  //   ],
-  //   handler: () => {
-  //     console.log("Task created!");
-  //     return "Task created";
-  //   }
-  // });
-
-  // useCopilotAction({
-  //   name: "setTaskTitle",
-  //   description: "Update task title.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "taskId", type: "string", required: true, description: "ID of the task to update" },
-  //     { name: "title", type: "string", required: true, description: "New title for the task" }
-  //   ],
-  //   handler: () => {
-  //     return "Task title updated";
-  //   }
-  // });
-
-  // useCopilotAction({
-  //   name: "setTaskSubtitle",
-  //   description: "Update task subtitle.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "taskId", type: "string", required: true, description: "ID of the task to update" },
-  //     { name: "subtitle", type: "string", required: true, description: "New subtitle for the task" }
-  //   ],
-  //   handler: () => {
-  //     return "Task subtitle updated";
-  //   }
-  // });
-
-  // useCopilotAction({
-  //   name: "setTaskDescription",
-  //   description: "Update task description.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "taskId", type: "string", required: true, description: "ID of the task to update" },
-  //     { name: "description", type: "string", required: true, description: "New description for the task" }
-  //   ],
-  //   handler: () => {
-  //     return "Task description updated";
-  //   }
-  // });
-
-  // useCopilotAction({
-  //   name: "addTaskTag",
-  //   description: "Add a tag to a task.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "taskId", type: "string", required: true, description: "ID of the task" },
-  //     { name: "tag", type: "string", required: true, description: "Tag to add" }
-  //   ],
-  //   handler: () => {
-  //     return "Tag added";
-  //   }
-  // });
-
-  // useCopilotAction({
-  //   name: "removeTaskTag",
-  //   description: "Remove a tag from a task.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "taskId", type: "string", required: true, description: "ID of the task" },
-  //     { name: "tag", type: "string", required: true, description: "Tag to remove" }
-  //   ],
-  //   handler: () => {
-  //     return "Tag removed";
-  //   }
-  // });
-
-  // useCopilotAction({
-  //   name: "setTaskStatus",
-  //   description: "Move task to a different status column.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "taskId", type: "string", required: true, description: "ID of the task" },
-  //     { name: "status", type: "string", required: true, description: "New status (new, in_progress, review, or completed)" }
-  //   ],
-  //   handler: () => {
-  //     return "Task status updated";
-  //   }
-  // });
-
-  // useCopilotAction({
-  //   name: "deleteTask",
-  //   description: "Delete a task.",
-  //   available: "remote",
-  //   parameters: [
-  //     { name: "taskId", type: "string", required: true, description: "ID of the task to delete" }
-  //   ],
-  //   handler: () => {
-  //     return "Task deleted";
-  //   }
-  // });
 
   const cachedStateRef = useRef<AgentState>(state ?? initialState);
   useEffect(() => {
@@ -297,11 +155,29 @@ export default function CopilotKitPage() {
   return (
     <div
       style={{ "--copilot-kit-primary-color": "#2563eb" } as CopilotKitCSSProperties}
-      className="h-screen flex flex-col"
+      className="relative h-screen flex flex-col bg-[#DEDEE9] p-2"
     >
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="-order-1 max-md:hidden flex flex-col min-w-80 w-[30vw] max-w-120 p-4 pr-0">
-          <div className="h-full flex flex-col align-start w-full shadow-lg rounded-2xl border border-sidebar-border overflow-hidden">
+      {/* Gradient Orbs Background */}
+      <div className="absolute w-[445.84px] h-[445.84px] left-[1040px] top-[11px] rounded-full z-0"
+           style={{ background: 'rgba(255, 172, 77, 0.2)', filter: 'blur(103.196px)' }} />
+      <div className="absolute w-[609.35px] h-[609.35px] left-[1338.97px] top-[624.5px] rounded-full z-0"
+           style={{ background: '#C9C9DA', filter: 'blur(103.196px)' }} />
+      <div className="absolute w-[609.35px] h-[609.35px] left-[670px] top-[-365px] rounded-full z-0"
+           style={{ background: '#C9C9DA', filter: 'blur(103.196px)' }} />
+      <div className="absolute w-[609.35px] h-[609.35px] left-[507.87px] top-[702.14px] rounded-full z-0"
+           style={{ background: '#F3F3FC', filter: 'blur(103.196px)' }} />
+      <div className="absolute w-[445.84px] h-[445.84px] left-[127.91px] top-[331px] rounded-full z-0"
+           style={{ background: 'rgba(255, 243, 136, 0.3)', filter: 'blur(103.196px)' }} />
+      <div className="absolute w-[445.84px] h-[445.84px] left-[-205px] top-[802.72px] rounded-full z-0"
+           style={{ background: 'rgba(255, 172, 77, 0.2)', filter: 'blur(103.196px)' }} />
+
+      <div className="flex flex-1 overflow-hidden z-10 gap-2">
+        <aside className="-order-1 max-md:hidden flex flex-col min-w-80 w-[30vw] max-w-120">
+          <div className="h-full flex flex-col align-start w-full border-2 border-white bg-white/50 backdrop-blur-md shadow-elevation-lg rounded-lg overflow-hidden">
+            <div className="p-6 border-b border-[#DBDBE5]">
+              <h1 className="text-xl font-semibold text-[#010507] mb-1">Kanban Board</h1>
+              <p className="text-sm text-[#57575B]">AI-powered task management</p>
+            </div>
             {isDesktop && (
               <CopilotChat
                 className="flex-1 overflow-auto w-full"
@@ -318,7 +194,7 @@ export default function CopilotKitPage() {
             )}
           </div>
         </aside>
-        <main className="relative flex flex-1 h-full flex-col">
+        <main className="relative flex flex-1 h-full flex-col rounded-lg bg-white/30 backdrop-blur-sm overflow-hidden">
           <BoardTabs
             boards={viewState.boards}
             activeBoardId={viewState.activeBoardId}
