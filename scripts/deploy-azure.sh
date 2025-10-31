@@ -87,25 +87,29 @@ az acr create \
     --output table
 
 echo ""
-echo "Step 3: Building and pushing backend image..."
-az acr build \
-    --registry "$ACR_NAME" \
-    --image kanban-agent:latest \
-    --file agent/Dockerfile \
-    --context . \
-    --platform linux/amd64
+echo "Step 3: Logging into ACR..."
+az acr login --name "$ACR_NAME"
 
 echo ""
-echo "Step 4: Building and pushing frontend image..."
-az acr build \
-    --registry "$ACR_NAME" \
-    --image kanban-ui:latest \
-    --file Dockerfile \
-    --context . \
-    --platform linux/amd64
+echo "Step 4: Building backend image for linux/amd64..."
+cd agent
+docker build --platform linux/amd64 -t "$ACR_NAME.azurecr.io/kanban-agent:latest" -f Dockerfile ..
+cd ..
 
 echo ""
-echo "Step 5: Creating Container Apps environment..."
+echo "Step 5: Pushing backend image..."
+docker push "$ACR_NAME.azurecr.io/kanban-agent:latest"
+
+echo ""
+echo "Step 6: Building frontend image for linux/amd64..."
+docker build --platform linux/amd64 -t "$ACR_NAME.azurecr.io/kanban-ui:latest" -f Dockerfile .
+
+echo ""
+echo "Step 7: Pushing frontend image..."
+docker push "$ACR_NAME.azurecr.io/kanban-ui:latest"
+
+echo ""
+echo "Step 8: Creating Container Apps environment..."
 az containerapp env create \
     --name kanban-env \
     --resource-group "$RESOURCE_GROUP" \
@@ -113,13 +117,13 @@ az containerapp env create \
     --output table
 
 echo ""
-echo "Step 6: Getting ACR credentials..."
+echo "Step 9: Getting ACR credentials..."
 ACR_USERNAME=$(az acr credential show --name "$ACR_NAME" --query username -o tsv)
 ACR_PASSWORD=$(az acr credential show --name "$ACR_NAME" --query passwords[0].value -o tsv)
 ACR_SERVER="${ACR_NAME}.azurecr.io"
 
 echo ""
-echo "Step 7: Deploying backend container app..."
+echo "Step 10: Deploying backend container app..."
 az containerapp create \
     --name "$BACKEND_APP_NAME" \
     --resource-group "$RESOURCE_GROUP" \
@@ -150,7 +154,7 @@ echo ""
 echo "Backend deployed at: $BACKEND_URL"
 
 echo ""
-echo "Step 8: Deploying frontend container app..."
+echo "Step 11: Deploying frontend container app..."
 az containerapp create \
     --name "$FRONTEND_APP_NAME" \
     --resource-group "$RESOURCE_GROUP" \

@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json pnpm-lock.yaml* ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies (skip postinstall script that sets up .NET agent)
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Stage 2: Builder
 FROM node:20-alpine AS builder
