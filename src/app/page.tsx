@@ -40,7 +40,12 @@ export default function CopilotKitPage() {
       cachedStateRef.current = state as AgentState;
     }
   }, [state]);
+
   const viewState: AgentState = isNonEmptyAgentState(state) ? (state as AgentState) : cachedStateRef.current;
+  useEffect(() => {
+    console.log("Current state:");
+    console.log(viewState);
+  }, [viewState]);
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 

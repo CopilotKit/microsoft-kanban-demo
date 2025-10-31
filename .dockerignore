@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.claude-workflow
+agent
+integrations
+*.log
+.env*.local
+README.md
+CLAUDE.md

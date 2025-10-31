@@ -193,3 +193,5 @@ dotnet user-secrets set GitHubToken "YOUR_TOKEN_HERE"
 If port 8000 is already in use, you can change it in:
 - `agent/Properties/launchSettings.json` - Update `applicationUrl`
 - `src/app/api/copilotkit/route.ts` - Update the HttpAgent URL
+
+Built by Mark Morgan
