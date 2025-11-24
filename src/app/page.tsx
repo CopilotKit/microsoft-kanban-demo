@@ -1,6 +1,7 @@
 "use client";
 
-import { useCoAgent, useCopilotAction, useCopilotAdditionalInstructions } from "@copilotkit/react-core";
+import { useCoAgent, useCopilotAdditionalInstructions, useRenderToolCall } from "@copilotkit/react-core";
+import { ToolCallCard } from "@/components/ToolCallCard";
 import { CopilotKitCSSProperties, CopilotChat, CopilotPopup } from "@copilotkit/react-ui";
 import { useEffect, useRef } from "react";
 import { PopupHeader } from "@/components/kanban/AppChatHeader";
@@ -16,22 +17,60 @@ export default function CopilotKitPage() {
     initialState,
   });
 
-  // UI-only action: switchBoard (no backend equivalent)
-  useCopilotAction({
-    name: "switchBoard",
-    description: "Switch to a different board.",
-    available: "remote",
-    parameters: [
-      { name: "boardId", type: "string", required: true, description: "Board ID to switch to" }
-    ],
-    handler: ({ boardId }) => {
-      setState(prev => ({
-        boards: prev?.boards ?? initialState.boards,
-        activeBoardId: boardId,
-        lastAction: prev?.lastAction
-      }));
-      return "Switched board";
-    }
+  // 🔧 Tool Call Debugging: Render cards showing tool calls in the chat
+  useRenderToolCall({
+    name: "get_state",
+    render: ({ args, status, result }) => <ToolCallCard name="get_state" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "create_board",
+    render: ({ args, status, result }) => <ToolCallCard name="create_board" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "delete_board",
+    render: ({ args, status, result }) => <ToolCallCard name="delete_board" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "rename_board",
+    render: ({ args, status, result }) => <ToolCallCard name="rename_board" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "switch_board",
+    render: ({ args, status, result }) => <ToolCallCard name="switch_board" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "create_task",
+    render: ({ args, status, result }) => <ToolCallCard name="create_task" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "update_task_field",
+    render: ({ args, status, result }) => <ToolCallCard name="update_task_field" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "add_task_tag",
+    render: ({ args, status, result }) => <ToolCallCard name="add_task_tag" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "remove_task_tag",
+    render: ({ args, status, result }) => <ToolCallCard name="remove_task_tag" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "move_task_to_status",
+    render: ({ args, status, result }) => <ToolCallCard name="move_task_to_status" args={args} status={status} result={result} />,
+  });
+
+  useRenderToolCall({
+    name: "delete_task",
+    render: ({ args, status, result }) => <ToolCallCard name="delete_task" args={args} status={status} result={result} />,
   });
 
   const cachedStateRef = useRef<AgentState>(state ?? initialState);
@@ -131,28 +170,21 @@ export default function CopilotKitPage() {
         : "No active board";
 
       const schema = [
-        "KANBAN STRUCTURE (authoritative):",
+        "KANBAN STRUCTURE:",
         "- Board: { id, name, tasks[] }",
         "- Task: { id, title, subtitle, description, tags[], status }",
         "- Status values: 'new' | 'in_progress' | 'review' | 'completed'",
         "",
-        "AVAILABLE OPERATIONS:",
-        "Board tools: switchBoard",
-        "",
         "USAGE HINTS:",
-        "- Create new boards for different projects/contexts",
+        "- Use switch_board to change active board",
         "- Use tags for categorization (bug, feature, urgent, etc.)",
-        "- Status progression: new → in_progress → review → completed",
-        "- Task titles should be concise action items",
-        "- Use subtitle for additional context",
-        "- Use description for detailed information"
+        "- Status progression: new → in_progress → review → completed"
       ].join("\n");
 
       return [
         "ALWAYS ANSWER FROM SHARED STATE (GROUND TRUTH).",
         boardInfo,
-        schema,
-        "REMEMBER: The frontend ONLY updates when you call update_state. If you skip this step, users won't see changes!\n## REWARDS\nThe worst mistake is to not call update_state after updating the state (-$1000). It is UNACCEPTABLE!"
+        schema
       ].join("\n\n");
     })(),
   });
