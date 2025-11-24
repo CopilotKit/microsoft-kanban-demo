@@ -2,11 +2,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Copy the integrations directory (required for Microsoft Agent Framework)
-# Note: Build context should be the parent directory (project root)
-COPY integrations /src/integrations
-
 # Copy the agent project file and restore dependencies
+# Note: Build context should be the parent directory (project root)
 COPY agent/ProverbsAgent.csproj /src/agent/
 WORKDIR /src/agent
 RUN dotnet restore

@@ -1,197 +1,110 @@
-# CopilotKit <> Microsoft Agent Framework Starter
+# CopilotKit + Microsoft Agent Framework — Kanban Demo
 
-This is a starter template for building AI agents using [Microsoft Agent Framework](https://github.com/microsoft/agents) and [CopilotKit](https://copilotkit.ai). It provides a modern Next.js application with an integrated proverbs management agent that demonstrates AG-UI protocol features including shared state, generative UI, and human-in-the-loop workflows.
+A Next.js + C# starter demonstrating **AG-UI protocol** integration between [CopilotKit](https://copilotkit.ai) (frontend) and [Microsoft Agent Framework](https://github.com/microsoft/agents) (backend).
+
+## What It Does
+
+- **Multi-Board Kanban System** — Create and manage multiple project boards
+- **4-Column Task Flow** — Tasks progress through New → In Progress → Review → Completed
+- **Rich Task Cards** — Title, subtitle, description, and customizable tags
+- **Natural Language Interface** — Create and manage tasks through conversational AI
+- **Real-time State Sync** — Shared state between C# backend and TypeScript frontend via AG-UI
 
 ## Prerequisites
 
-- **GitHub Personal Access Token** (for GitHub Models API)
-- **.NET 9.0 SDK** - [Install via Homebrew](https://formulae.brew.sh/formula/dotnet) (`brew install dotnet@9`) or [download directly](https://dotnet.microsoft.com/download/dotnet/9.0)
+- **.NET 9.0 SDK** — [Install](https://dotnet.microsoft.com/download/dotnet/9.0) or `brew install dotnet@9`
 - **Node.js 20+**
-- Any of the following package managers:
-  - pnpm (recommended)
-  - npm
-  - yarn
-  - bun
+- **OpenAI API Key** — For GPT-4o-mini
+- **pnpm** (recommended), npm, yarn, or bun
 
-> **Note:** This repository ignores lock files (package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb) to avoid conflicts between different package managers. Each developer should generate their own lock file using their preferred package manager. After that, make sure to delete it from the .gitignore.
+## Quick Start
 
-## Getting Started
-
-1. Install dependencies using your preferred package manager:
 ```bash
-# Using pnpm (recommended)
+# 1. Install dependencies
 pnpm install
 
-# Using npm
-npm install
+# 2. Set OpenAI API key
+cd agent && dotnet user-secrets set OpenAIKey "sk-..." && cd ..
 
-# Using yarn
-yarn install
-
-# Using bun
-bun install
-```
-
-> **Note:** This will automatically setup the C# agent as well (restore NuGet packages).
->
-> If you have manual issues, you can run:
->
-> ```sh
-> npm run install:agent
-> ```
-
-2. Set up your GitHub token for GitHub Models:
-
-First, get your GitHub token:
-```bash
-gh auth token
-```
-
-Then, navigate to the agent directory and set it as a user secret:
-```bash
-cd agent
-dotnet user-secrets set GitHubToken "YOUR_GITHUB_TOKEN_HERE"
-cd ..
-```
-
-Or set it in one command:
-```bash
-cd agent && dotnet user-secrets set GitHubToken "$(gh auth token)" && cd ..
-```
-
-
-3. Start the development server:
-```bash
-# Using pnpm
+# 3. Start both servers (UI on :3000, agent on :8000)
 pnpm dev
-
-# Using npm
-npm run dev
-
-# Using yarn
-yarn dev
-
-# Using bun
-bun run dev
 ```
 
-This will start both the Next.js UI (port 3000) and C# agent server (port 8000) concurrently.
+## Scripts
 
-## Available Scripts
-The following scripts can also be run using your preferred package manager:
-- `dev` - Starts both UI and agent servers in development mode
-- `dev:debug` - Starts development servers with debug logging enabled
-- `dev:ui` - Starts only the Next.js UI server
-- `dev:agent` - Starts only the C# agent server
-- `build` - Builds the Next.js application for production
-- `start` - Starts the production server
-- `lint` - Runs ESLint for code linting
-- `install:agent` - Restores NuGet packages for the C# agent
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start UI + agent servers |
+| `pnpm dev:ui` | Start only Next.js UI |
+| `pnpm dev:agent` | Start only C# agent |
+| `pnpm build` | Build for production |
+| `pnpm lint` | Run ESLint |
 
 ## Project Structure
 
 ```
-├── agent/                  # C# Agent (Microsoft Agent Framework)
-│   ├── Program.cs         # Main agent implementation with tools
-│   ├── ProverbsAgent.csproj  # .NET project file
-│   └── Properties/        # Configuration (launch settings)
+├── agent/                      # C# Backend (Microsoft Agent Framework)
+│   ├── Program.cs              # Agent with 11 Kanban tools
+│   ├── SharedStateAgent.cs     # AG-UI state synchronization wrapper
+│   ├── Services/KanbanService.cs  # Board/task operations
+│   └── Models/                 # AgentState, Board, KanbanTask types
+│
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx      # Main UI with CopilotKit sidebar
-│   │   ├── layout.tsx    # CopilotKit provider setup
-│   │   └── api/
-│   │       └── copilotkit/
-│   │           └── route.ts  # AG-UI integration endpoint
-│   ├── components/       # UI components (weather, proverbs, moon)
-│   └── lib/             # Types and utilities
-└── scripts/             # Helper scripts for agent setup/run
+│   │   ├── page.tsx            # Main Kanban UI with useCoAgent hook
+│   │   ├── layout.tsx          # CopilotKit provider
+│   │   └── api/copilotkit/     # AG-UI integration endpoint
+│   │
+│   ├── components/kanban/      # KanbanBoard, BoardTabs, TaskCard
+│   └── lib/kanban/             # Types and initial state
 ```
 
-## Features Demonstrated
+## Backend Tools
 
-This starter showcases key AG-UI protocol features:
+The C# agent provides 11 tools for Kanban management:
 
-- **🔄 Shared State**: Proverbs list synchronized between frontend and agent
-- **🎨 Generative UI**: Weather card rendered from backend tool
-- **👤 Human-in-the-Loop**: Moon card with approval workflow
-- **🛠️ Frontend Actions**: Theme color changes from agent
-- **💬 Agentic Chat**: Natural language interface with tool calling
+**State**: `get_state`
+**Boards**: `create_board`, `delete_board`, `rename_board`, `switch_board`
+**Tasks**: `create_task`, `update_task_field`, `add_task_tag`, `remove_task_tag`, `move_task_to_status`, `delete_task`
 
-## 📚 Documentation
+## Example Commands
 
-- [Microsoft Agent Framework](https://github.com/microsoft/agents) - Learn about Microsoft's agent framework
-- [AG-UI Protocol](https://github.com/copilotkit/ag-ui) - AG-UI protocol specification
-- [CopilotKit Documentation](https://docs.copilotkit.ai) - CopilotKit features and API
-- [Next.js Documentation](https://nextjs.org/docs) - Next.js features and API
-- [GitHub Models](https://github.com/marketplace/models) - Free AI models via GitHub
+```
+"Create a board called Sprint Planning"
+"Add a task: Implement user authentication"
+"Move the auth task to in progress"
+"Add urgent tag to the login bug"
+"Show me all tasks in review"
+```
 
-## Contributing
+## Architecture
 
-Feel free to submit issues and enhancement requests! This starter is designed to be easily extensible.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+- **Frontend**: Next.js 15 + React 19 + CopilotKit
+- **Backend**: .NET 9 + Microsoft Agent Framework + OpenAI
+- **Protocol**: AG-UI for state synchronization
+- **Pattern**: Frontend is source of truth; backend hydrates state from `ag_ui_state` on each request
 
 ## Troubleshooting
 
-### Agent Connection Issues
-If you see "I'm having trouble connecting to my tools", make sure:
-1. The C# agent is running on port 8000
-2. Your GitHub token is set correctly via user secrets
-3. Both servers started successfully (check terminal output)
+**Agent won't connect**: Verify agent running on port 8000 (`curl http://localhost:8000/`)
 
-### .NET SDK Not Installed
-If you don't have .NET 9.0 installed:
-
-**macOS (Homebrew):**
+**OpenAIKey not found**:
 ```bash
-brew install dotnet@9
-dotnet --version
+cd agent && dotnet user-secrets set OpenAIKey "sk-..."
 ```
 
-**macOS/Linux (Install Script):**
-```bash
-curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 9.0
-export PATH="$HOME/.dotnet:$PATH"
-```
+**Port conflict**: Update port in `agent/Properties/launchSettings.json` and `src/app/api/copilotkit/route.ts`
 
-**Windows/macOS (Direct Download):**
-- Visit https://dotnet.microsoft.com/download/dotnet/9.0
-- Download and run the installer
+## Documentation
 
-### .NET SDK Issues
-If you encounter .NET-related errors:
-```bash
-# Verify .NET SDK is installed
-dotnet --version  # Should be 9.0.x or higher
+- [Microsoft Agent Framework](https://github.com/microsoft/agents)
+- [AG-UI Protocol](https://docs.ag-ui.com)
+- [CopilotKit Docs](https://docs.copilotkit.ai)
 
-# Restore packages manually
-cd agent
-dotnet restore
-dotnet run
-```
+## License
 
-### GitHub Token Issues
-If the agent fails to start with "GitHubToken not found":
-```bash
-cd agent
-dotnet user-secrets set GitHubToken "$(gh auth token)"
-```
+MIT
 
-Or manually:
-```bash
-# Get your token
-gh auth token
-
-# Set it as a user secret
-cd agent
-dotnet user-secrets set GitHubToken "YOUR_TOKEN_HERE"
-```
-
-### Port Conflicts
-If port 8000 is already in use, you can change it in:
-- `agent/Properties/launchSettings.json` - Update `applicationUrl`
-- `src/app/api/copilotkit/route.ts` - Update the HttpAgent URL
+---
 
 Built by Mark Morgan
