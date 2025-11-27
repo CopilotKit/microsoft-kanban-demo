@@ -2,6 +2,8 @@
 
 A Next.js + C# starter demonstrating **AG-UI protocol** integration between [CopilotKit](https://copilotkit.ai) (frontend) and [Microsoft Agent Framework](https://github.com/microsoft/agents) (backend).
 
+https://github.com/user-attachments/assets/531c6a3b-e7ea-476a-8cbd-6c30f7245c4e
+
 ## What It Does
 
 - **Multi-Board Kanban System** — Create and manage multiple project boards
